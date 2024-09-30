@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Crunchyroll Spoiler Bandaid
 // @namespace    http://crunchyroll.com/
-// @version      2024-09-29
+// @version      1.1
 // @description  I wanted spoiler-support now, so here we go.
 // @author       PondusDev
 // @match        https://www.crunchyroll.com/watch/*
