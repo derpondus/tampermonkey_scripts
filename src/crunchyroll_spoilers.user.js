@@ -1,13 +1,10 @@
 // ==UserScript==
 // @name         Crunchyroll Spoiler Bandaid
 // @namespace    http://crunchyroll.com/
-// @version      1.1
+// @version      1.1.1
 // @description  I wanted spoiler-support now, so here we go.
 // @author       PondusDev
-// @match        https://www.crunchyroll.com/watch/*
-// @match        https://www.crunchyroll.com/*/watch/*
-// @match        https://www.crunchyroll.com/series/*
-// @match        https://www.crunchyroll.com/*/series/*
+// @match        https://www.crunchyroll.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=crunchyroll.com
 // @grant        none
 // ==/UserScript==
@@ -64,6 +61,8 @@
     `;
     document.head.appendChild(style);
 
+    let oldHref = document.location.href
+    const regex = /\|\|[^\s|].*[^\s|]\|\|/gs
 
     const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
 
@@ -82,7 +81,7 @@
         for (const comment of commentHolder.querySelectorAll(".comentario-card .comentario-card-body > p:not(:has(span.crunchy-comments-spoiler-block))")) {
             comment.innerHTML = comment.innerHTML.replaceAll(regex, (match) => `<span class="crunchy-comments-spoiler-block">${match.slice(2,match.length-2).trim()}</span>`)
             comment.querySelectorAll("span.crunchy-comments-spoiler-block").forEach((spoiler) => {
-                spoiler.addEventListener("click", (e) => {
+                spoiler.addEventListener("click", () => {
                     spoiler.classList.toggle("revealed")
                 })
             })
@@ -95,9 +94,33 @@
         })
     }
 
-    const regex = /\|\|[^\s|].*[^\s|]\|\|/gs
-    const commentHolder = await getNonnull(() => document.querySelector("comentario-comments .comentario-comments"))
-    const observer = new MutationObserver(replaceAllWithHtmlMutation.bind(null, regex, commentHolder))
+    let commentObserver = null;
+    async function exec() {
+        if (commentObserver !== null) commentObserver.disconnect()
+        const commentHolder = await getNonnull(() => document.querySelector("comentario-comments .comentario-comments"))
+        commentObserver = new MutationObserver(replaceAllWithHtmlMutation.bind(null, regex, commentHolder))
 
-    replaceAllWithHtmlMutation(regex, commentHolder, null, observer);
+        replaceAllWithHtmlMutation(regex, commentHolder, null, commentObserver);
+    }
+
+    /* Taken from https://github.com/martian0x80/CrunchyComments */
+    function checkAndUpdate() {
+        window.addEventListener("popstate", exec)
+
+        const bodyList = document.querySelector("body")
+
+        const observer = new MutationObserver(() => {
+            if (oldHref !== document.location.href) {
+                oldHref = document.location.href
+                exec()
+            }
+        })
+        observer.observe(bodyList, {
+            childList: true,
+            subtree: true,
+        })
+    }
+
+    exec()
+    checkAndUpdate()
 })();
