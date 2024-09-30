@@ -4,7 +4,10 @@
 // @version      2024-09-29
 // @description  I wanted spoiler-support now, so here we go.
 // @author       PondusDev
-// @match        https://www.crunchyroll.com/de/watch/*
+// @match        https://www.crunchyroll.com/watch/*
+// @match        https://www.crunchyroll.com/*/watch/*
+// @match        https://www.crunchyroll.com/series/*
+// @match        https://www.crunchyroll.com/*/series/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=crunchyroll.com
 // @grant        none
 // ==/UserScript==
