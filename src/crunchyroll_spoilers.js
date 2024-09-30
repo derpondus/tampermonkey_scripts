@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Crunchyroll Spoiler Bandaid
-// @namespace    http://tampermonkey.net/
+// @namespace    http://crunchyroll.com/
 // @version      2024-09-29
 // @description  I wanted spoiler-support now, so here we go.
 // @author       PondusDev
