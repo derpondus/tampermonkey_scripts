@@ -25,6 +25,9 @@
         cursor: pointer;
         font-family: monospace;
         position: relative;
+        -webkit-user-select: none; /* Safari */
+        -ms-user-select: none; /* IE 10 and IE 11 */
+        user-select: none; /* Standard syntax */
     }
 
     .crunchy-comments-spoiler-block:hover {
@@ -34,6 +37,9 @@
     .crunchy-comments-spoiler-block.revealed {
         background: rgba(127, 127, 127, 0.3);
         color: revert;
+        -webkit-user-select: auto; /* Safari */
+        -ms-user-select: auto; /* IE 10 and IE 11 */
+        user-select: auto; /* Standard syntax */
     }
 
     .crunchy-comments-spoiler-block:hover::after {
