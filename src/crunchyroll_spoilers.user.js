@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Crunchyroll Spoiler Bandaid
 // @namespace    http://crunchyroll.com/
-// @version      1.1.1
+// @version      1.2
 // @description  I wanted spoiler-support now, so here we go.
 // @author       PondusDev
 // @match        https://www.crunchyroll.com/*
@@ -13,6 +13,8 @@
     'use strict';
 
     // Your code here...
+    // >>> somehow this got very pythonic
+
     // insert css
     const style = document.createElement('style');
     style.innerHTML = `
@@ -61,21 +63,64 @@
     `;
     document.head.appendChild(style);
 
-    let oldHref = document.location.href
-    const regex = /\|\|[^\s|].*[^\s|]\|\|/gs
+    const logPrefix = "[CSB]"
+    function info(...args) { console.info(logPrefix, ...args) }
+    function debug(...args) { console.debug(logPrefix, ...args) }
 
-    const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
+    const regex = /\|\|.+?\|\|/gs
 
-    async function getNonnull(f) {
-        let data = f();
-        while (data === null) {
-            await sleep(100)
-            data = f();
-        }
-        return data;
+    /* Waits for the first element that matches the selector to appear in the DOM */
+    async function getBodyElementEventually(selector) {
+        return new Promise((resolve) => {
+            const observer = new MutationObserver(async (mutations, observer) => {
+                const elem = document.querySelector(selector);
+                if (elem !== null) {
+                    observer.disconnect()
+                    info("found comentario")
+                    resolve(elem)
+                }
+            })
+            observer.observe(document.body, {
+                subtree: true,
+                childList: true,
+                attributes: true,
+            })
+            const elem = document.querySelector(selector);
+            if (elem !== null) {
+                observer.disconnect()
+                info("found comentario immediately")
+                resolve(elem)
+            }
+        })
     }
 
-    function replaceAllWithHtmlMutation(regex, commentHolder, mutationsList, observer) {
+    /* Inspired by https://stackoverflow.com/questions/31798816 */
+    /* Watches for the removal of the comentarioComments node and calls the callback when it happens */
+    let removalObserver = null;  // not strictly necessary to be stored out here but its more code change resilient
+    function onComentarioRemoval(comentarioComments, callback) {
+        if (!document.contains(comentarioComments)) {
+            info("comentario was already removed")
+            Promise.resolve().then(callback);
+            return;
+        }
+        removalObserver = new MutationObserver(function (mutations) {
+            const removedNodes = mutations.flatMap((mutation) => Array.from(mutation.removedNodes))
+            debug("removed nodes", removedNodes)
+            if (removedNodes.some((node) => node === comentarioComments)) {
+                removalObserver.disconnect();
+                info("comentario was removed")
+                callback();
+            }
+        })
+
+        removalObserver.observe(document, {
+            subtree: true,
+            childList: true,
+        });
+    }
+
+    /* Takes the `.comentario-comments` element replaces all spoilers with a span element that can be clicked to reveal the spoiler */
+    function replaceSpoilersWithHtml(regex, commentHolder, mutationsList, observer) {
         observer.disconnect();
 
         for (const comment of commentHolder.querySelectorAll(".comentario-card .comentario-card-body > p:not(:has(span.crunchy-comments-spoiler-block))")) {
@@ -96,31 +141,19 @@
 
     let commentObserver = null;
     async function exec() {
+        info("(re-)init")
         if (commentObserver !== null) commentObserver.disconnect()
-        const commentHolder = await getNonnull(() => document.querySelector("comentario-comments .comentario-comments"))
-        commentObserver = new MutationObserver(replaceAllWithHtmlMutation.bind(null, regex, commentHolder))
+        if (removalObserver !== null) removalObserver.disconnect()
 
-        replaceAllWithHtmlMutation(regex, commentHolder, null, commentObserver);
+        /* Reinit on removal of the comentario element */
+        const comentarioComments = await getBodyElementEventually("comentario-comments")
+        onComentarioRemoval(comentarioComments, exec)
+
+        /* Add spoiler blocks to existing comments + react to changes */
+        const commentHolder = await getBodyElementEventually("comentario-comments .comentario-comments")
+        commentObserver = new MutationObserver(replaceSpoilersWithHtml.bind(null, regex, commentHolder))
+        replaceSpoilersWithHtml(regex, commentHolder, null, commentObserver);
     }
 
-    /* Taken from https://github.com/martian0x80/CrunchyComments */
-    function checkAndUpdate() {
-        window.addEventListener("popstate", exec)
-
-        const bodyList = document.querySelector("body")
-
-        const observer = new MutationObserver(() => {
-            if (oldHref !== document.location.href) {
-                oldHref = document.location.href
-                exec()
-            }
-        })
-        observer.observe(bodyList, {
-            childList: true,
-            subtree: true,
-        })
-    }
-
-    exec()
-    checkAndUpdate()
+    await exec()
 })();
