@@ -69,7 +69,6 @@
 
     function replaceAllWithHtmlMutation(regex, commentHolder, mutationsList, observer) {
         observer.disconnect();
-        console.log("replacing")
 
         for (const comment of commentHolder.querySelectorAll(".comentario-card .comentario-card-body > p:not(:has(span.crunchy-comments-spoiler-block))")) {
             comment.innerHTML = comment.innerHTML.replaceAll(regex, (match) => `<span class="crunchy-comments-spoiler-block">${match.slice(2,match.length-2).trim()}</span>`)
@@ -80,7 +79,6 @@
             })
         }
 
-        console.log("done")
         observer.observe(commentHolder, {
             subtree: true,
             childList: true,
