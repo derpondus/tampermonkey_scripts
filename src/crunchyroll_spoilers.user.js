@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Crunchyroll Spoiler Bandaid
 // @namespace    http://crunchyroll.com/
-// @version      1.2
+// @version      1.2.1
 // @description  I wanted spoiler-support now, so here we go.
 // @author       PondusDev
 // @match        https://www.crunchyroll.com/*
@@ -30,6 +30,9 @@
         -webkit-user-select: none; /* Safari */
         -ms-user-select: none; /* IE 10 and IE 11 */
         user-select: none; /* Standard syntax */
+        transition:
+            background 0.2s,
+            color 0.2s;
     }
 
     .crunchy-comments-spoiler-block:hover {
