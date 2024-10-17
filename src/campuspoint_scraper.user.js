@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CampusPoint extractor
 // @namespace    http://tampermonkey.net/
-// @version      1.6
+// @version      1.7
 // @description  pack listing data from campuspoint.de into a csv in the console
 // @author       PondusDev
 // @match        https://www.campuspoint.de/mobile/notebooks*
@@ -43,7 +43,7 @@
 
         const title_regex = /.*?(Lenovo|HP)(?: Campus)?\s(?:([^()G]*)\s)?([^G()][^()\s]*)\s(?:(G\S*)\s)?(.*)/
         const artnr_regex = /.*?:\s(.*)/
-        const body_regex = /.*?\s\((\S+")\)\s(.*?)\s\((.+\s?x\s?.+?)(?:,.*)?\).*?,\s.*?(Intel.*|AMD.*|Qualcomm.*|Snapdragon.*),\s(.*?),\s(.*?),\s.*?(Intel.*?|AMD.*?|NVIDIA.*?|Qualcomm.*?),\s(.*)/
+        const body_regex = /.*?\s\((\S+")\)\s(.*?)\s\((.+\s?x\s?.+?)(?:,.*)?\).*?,\s.*?((?:Intel[^,]*|AMD[^,]*|Qualcomm[^,]*|Snapdragon[^,]*)(?:\(.*?\))?),\s([^()]*?),\s(.*?),\s(?:(.*?),\s)?.*?(Intel.*?|AMD.*?|NVIDIA.*?|Qualcomm.*?),\s(?:(.*?),\s)?(.*)/
 
         const product_holder = document.querySelectorAll(base_selector)
         const data = []
@@ -70,12 +70,13 @@
             next_data.body = product.querySelector(body_selector).innerText
             const body_comps = body_regex.exec(next_data.body)
             if (body_comps !== null) {
-                const [body_match_unused, disp_diagonal, disp_type, disp_size, cpu, ssd, ram, gpu, os] = body_comps
+                const [body_match_unused, disp_diagonal, disp_type, disp_size, cpu, ssd, ram, lte1, gpu, lte2, os] = body_comps
                 next_data.disp_diagonal = disp_diagonal
                 next_data.disp_type = disp_type
                 next_data.disp_size = disp_size
                 next_data.cpu = cpu
                 next_data.gpu = gpu
+                next_data.lte = lte1 || lte2
                 next_data.ssd = ssd
                 next_data.ram = ram
                 next_data.os = os
