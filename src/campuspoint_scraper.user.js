@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CampusPoint extractor
 // @namespace    http://tampermonkey.net/
-// @version      1.16
+// @version      1.16.1
 // @description  pack listing data from campuspoint.de into a csv in the console
 // @author       PondusDev
 // @match        https://www.campuspoint.de/mobile/notebooks*
@@ -82,7 +82,6 @@
                 next_data.ssd = ssd
                 next_data.ram = ram
                 next_data.os = os
-                next_data.form = form
                 next_data.body_ext = body_ext
             } else {
                 console.log("NO BODY FOUND", next_data.body)
