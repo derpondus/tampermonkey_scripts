@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CampusPoint extractor
 // @namespace    http://tampermonkey.net/
-// @version      1.1
+// @version      1.2
 // @description  pack listing data from campuspoint.de into a csv in the console
 // @author       PondusDev
 // @match        https://www.campuspoint.de/mobile/notebooks*
@@ -41,9 +41,9 @@
         const price = ".actions .price--current .price-tag"
         const oldprice = ".actions .price--old .price-tag"
 
-        const title_regex = /.*?Lenovo(?: Campus)?\s([^()G]*)\s([^G()][^()\s]*)\s(?:(G\S*)\s)?(.*)/
+        const title_regex = /.*?(Lenovo|HP)(?: Campus)?\s(?:([^()G]*)\s)?([^G()][^()\s]*)\s(?:(G\S*)\s)?(.*)/
         const artnr_regex = /.*?:\s(.*)/
-        const body_regex = /.*?\s\((\S+")\)\s(.*?)\s\((.+\s?x\s?.+?)(?:,.*)?\).*?,\s(Intel.*|AMD.*|Qualcomm.*|Snapdragon.*),\s(.*?),\s(.*?),\s(Intel.*?|AMD.*?|NVIDIA.*?|Qualcomm.*?),\s(.*)/
+        const body_regex = /.*?\s\((\S+")\)\s(.*?)\s\((.+\s?x\s?.+?)(?:,.*)?\).*?,\s(Intel.*|AMD.*|Qualcomm.*|Snapdragon.*),\s(.*?),\s(.*?),\s.*?(Intel.*?|AMD.*?|NVIDIA.*?|Qualcomm.*?),\s(.*)/
 
         const product_holder = document.querySelectorAll(base_selector)
         const data = []
