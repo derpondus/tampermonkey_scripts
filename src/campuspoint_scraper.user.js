@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CampusPoint extractor
 // @namespace    http://tampermonkey.net/
-// @version      1.4
+// @version      1.5
 // @description  pack listing data from campuspoint.de into a csv in the console
 // @author       PondusDev
 // @match        https://www.campuspoint.de/mobile/notebooks*
