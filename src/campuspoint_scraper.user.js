@@ -17,7 +17,7 @@
     // Your code here...
     function exec() {
         function convertToCSV(arr) {
-            const columns=["artnr", "brand", "name", "version", "gen", "oldPrice", "price", "disp_diagonal", "disp_type", "disp_size", "cpu", "gpu", "os", "ram", "ssd", "lte", "title_ext", "body_ext"]
+            const columns=["artnr", "brand", "name", "version", "gen", "oldPrice", "price", "disp_diagonal", "disp_type", "disp_size", "cpu", "gpu", "os", "ram", "ssd", "lte", "form", "title_ext", "body_ext"]
             const rows = [columns.join("\t")]
             for (const value of arr) {
                 rows.push(columns.map(it => value[it]).join("\t"))
@@ -71,7 +71,7 @@
             next_data.body = product.querySelector(body_selector).innerText.trim()
             const body_comps = body_regex.exec(next_data.body)
             if (body_comps !== null) {
-                const [body_match_unused, disp_diagonal, disp_type, disp_size, cpu, ssd, ram, lte1, gpu, lte2, os, body_ext] = body_comps
+                const [body_match_unused, disp_diagonal, disp_type, disp_size, cpu, ssd, ram, lte1, gpu, lte2, os, body_ext1, form, body_ext2] = body_comps
                 next_data.disp_diagonal = disp_diagonal
                 next_data.disp_type = disp_type
                 next_data.disp_size = disp_size
@@ -81,7 +81,8 @@
                 next_data.ssd = ssd
                 next_data.ram = ram
                 next_data.os = os
-                next_data.body_ext = body_ext
+                next_data.form = form
+                next_data.body_ext = ((body_ext1 ?? "") + ", " + (body_ext2 ?? "")).replace(/^\||\|$/, "").trim()
             } else {
                 console.log("NO BODY FOUND", next_data.body)
             }
