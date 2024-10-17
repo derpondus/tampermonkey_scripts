@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CampusPoint extractor
 // @namespace    http://tampermonkey.net/
-// @version      1.0
+// @version      1.1
 // @description  pack listing data from campuspoint.de into a csv in the console
 // @author       PondusDev
 // @match        https://www.campuspoint.de/mobile/notebooks*
@@ -97,6 +97,15 @@
                 console.log("--- Duplicate ---")
                 console.log(product)
                 console.log(all_data[product.artnr])
+                let diff = false
+                for (const key of Object.keys(product)) {
+                    if (product[key] !== all_data[product.artnr][key]) {
+                        console.log(`${key}: ${product[key]} !== ${all_data[product.artnr][key]}`)
+                        diff = true
+                    }
+                }
+                if (!diff) console.log(">>>>> No difference <<<<<")
+                console.log("----- -----")
             }
             all_data[product.artnr] = product
         }
