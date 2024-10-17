@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CampusPoint extractor
 // @namespace    http://tampermonkey.net/
-// @version      1.11
+// @version      1.12
 // @description  pack listing data from campuspoint.de into a csv in the console
 // @author       PondusDev
 // @match        https://www.campuspoint.de/mobile/notebooks*
@@ -17,7 +17,7 @@
     // Your code here...
     function exec() {
         function convertToCSV(arr) {
-            const columns=["artnr", "maker", "brand", "name", "gen", "oldPrice", "price", "disp_diagonal", "disp_type", "disp_size", "cpu", "gpu", "os", "ram", "ssd", "lte", "title_ext", "body_ext"]
+            const columns=["artnr", "brand", "name", "version", "gen", "oldPrice", "price", "disp_diagonal", "disp_type", "disp_size", "cpu", "gpu", "os", "ram", "ssd", "lte", "title_ext", "body_ext"]
             const rows = [columns.join("\t")]
             for (const value of arr) {
                 rows.push(columns.map(it => value[it]).join("\t"))
@@ -41,7 +41,7 @@
         const price = ".actions .price--current .price-tag"
         const oldprice = ".actions .price--old .price-tag"
 
-        const title_regex = /.*?(Lenovo|HP)(?: Campus)?\s(?:([^()G]*)\s)?([^G()][^()\s]*)\s(?:(G\S*)\s)?(.*)/
+        const title_regex = /.*?(Lenovo|HP)(?: Campus)?\s(?:([^()G\d]*(?:x360)?)\s)?(?:([^G()]*\d[^()G]*)\s)?(?:(G\S*)\s)?(.*)/
         const artnr_regex = /.*?:\s(.*)/
         const body_regex = /.*?\s\((\S+")\)\s(.*?)\s\((.+\s?x\s?.+?)(?:,.*)?\).*?,\s.*?((?:Intel[^,]*|AMD[^,]*|Qualcomm[^,]*|Snapdragon[^,]*)(?:\(.*?\))?),\s([^()]*?),\s(.*?),\s(?:(.*?),\s)?.*?(Intel.*?|AMD.*?|NVIDIA.*?|Qualcomm.*?),\s(?:(.*?),\s)?([^!]*?)(?:,\s(.*))?\n?$/
 
@@ -54,10 +54,10 @@
             next_data.title = product.querySelector(title_selector).innerText
             const title_comps = title_regex.exec(next_data.title)
             if (title_comps !== null) {
-                const [title_match_unused, maker, brand, name, gen, title_ext] = title_comps
-                next_data.maker = maker
+                const [title_match_unused, brand, name, version, gen, title_ext] = title_comps
                 next_data.brand = brand
                 next_data.name = name
+                next_data.version = version
                 next_data.gen = gen
                 next_data.title_ext = title_ext
             } else {
