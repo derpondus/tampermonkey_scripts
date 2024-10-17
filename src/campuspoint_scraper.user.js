@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CampusPoint extractor
 // @namespace    http://tampermonkey.net/
-// @version      1.3
+// @version      1.4
 // @description  pack listing data from campuspoint.de into a csv in the console
 // @author       PondusDev
 // @match        https://www.campuspoint.de/mobile/notebooks*
@@ -114,7 +114,10 @@
         console.log(convertToCSV(Object.values(all_data)))
 
         const toolbar_bottom = document.querySelector(".toolbar-bottom");
-        if (toolbar_bottom !== null) toolbar_bottom.scrollIntoView({behavior: "smooth"})
+        if (toolbar_bottom !== null) {
+            toolbar_bottom.scrollIntoView({behavior: "smooth"})
+            window.scrollBy(0, -500)
+        }
     }
 
     const button = document.createElement('button')
