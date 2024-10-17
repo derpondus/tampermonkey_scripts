@@ -41,7 +41,7 @@
         const price = ".actions .price--current .price-tag"
         const oldprice = ".actions .price--old .price-tag"
 
-        const title_regex = /.*?(Lenovo|HP)(?: Campus)?\s(?:([^()G\d]*(?:x360)?)\s)?(?:([^G()]*\d[^()G]*)\s)?(?:(G\S*)\s)?(.*)/
+        const title_regex = /.*?(Lenovo|HP)(?: Campus)?\s(?:([^()G\d]*(?:x360)?)\s)?(?:([^G()]*?\d[^()G]*?(?:\sCarbon)?)\s)?(?:([^()G\d]*|2in1)\s)?(?:(G\S*)\s)?(.*)/
         const artnr_regex = /.*?:\s(.*)/
         const body_regex = /.*?\s\((\S+")\)\s(.*?)\s\((.+\s?x\s?.+?)(?:,.*)?\).*?,\s.*?((?:Intel[^,]*|AMD[^,]*|Qualcomm[^,]*|Snapdragon[^,]*)(?:\(.*?\))?),\s([^()]*?),\s(.*?),\s(?:(.*?),\s)?.*?(Intel.*?|AMD.*?|NVIDIA.*?|Qualcomm.*?),\s(?:(.*?),\s)?([^!]*?)(?:,\s(.*))?\n?$/
 
@@ -54,9 +54,9 @@
             next_data.title = product.querySelector(title_selector).innerText
             const title_comps = title_regex.exec(next_data.title)
             if (title_comps !== null) {
-                const [title_match_unused, brand, name, version, gen, title_ext] = title_comps
+                const [title_match_unused, brand, name1, version, name2, gen, title_ext] = title_comps
                 next_data.brand = brand
-                next_data.name = name
+                next_data.name = (name1 ?? "") + " " + (name2 ?? "")
                 next_data.version = version
                 next_data.gen = gen
                 next_data.title_ext = title_ext
