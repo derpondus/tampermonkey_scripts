@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CampusPoint extractor
 // @namespace    http://tampermonkey.net/
-// @version      1.8
+// @version      1.9
 // @description  pack listing data from campuspoint.de into a csv in the console
 // @author       PondusDev
 // @match        https://www.campuspoint.de/mobile/notebooks*
@@ -17,7 +17,7 @@
     // Your code here...
     function exec() {
         function convertToCSV(arr) {
-            const columns=["artnr", "brand", "name", "gen", "oldPrice", "price", "disp_diagonal", "disp_type", "disp_size", "cpu", "gpu", "os", "ram", "ssd", "title_ext"]
+            const columns=["artnr", "maker", "brand", "name", "gen", "oldPrice", "price", "disp_diagonal", "disp_type", "disp_size", "cpu", "gpu", "os", "ram", "ssd", "lte", "title_ext"]
             const rows = [columns.join("\t")]
             for (const value of arr) {
                 rows.push(columns.map(it => value[it]).join("\t"))
