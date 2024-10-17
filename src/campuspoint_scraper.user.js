@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CampusPoint extractor
 // @namespace    http://tampermonkey.net/
-// @version      1.15
+// @version      1.16
 // @description  pack listing data from campuspoint.de into a csv in the console
 // @author       PondusDev
 // @match        https://www.campuspoint.de/mobile/notebooks*
@@ -41,7 +41,7 @@
         const price = ".actions .price--current .price-tag"
         const oldprice = ".actions .price--old .price-tag"
 
-        const title_regex = /.*?(Lenovo|HP)(?: Campus)?\s(?:([^()G\d]*(?:x360)?)\s)?(?:([^G()]*?\d[^()G]*?(?:\sCarbon)?)\s)?(?:([^()G\d]*|2in1)\s)?(?:(G\S*)\s)?(.*)/
+        const title_regex = /.*?(Lenovo|HP)(?: Campus)?\s(?:([^()G\d]*(?:x360)?)\s)?(?:([^G()]*?\d[^()G]*?(?:\sCarbon)?)\s)?(?:([^()G\d]*|2in1)\s)?(?:(G\S*)\s)?([^()]*)(?:\((.*)\)(.*))?/
         const artnr_regex = /.*?:\s(.*)/
         const body_regex = /.*?\s\((\S+")\)\s(.*?)\s\((.+\s?x\s?.+?)(?:,.*)?\).*?,\s.*?((?:Intel[^,]*|AMD[^,]*|Qualcomm[^,]*|Snapdragon[^,]*)(?:\(.*?\))?),\s([^()]*?),\s(.*?),\s(?:(.*?),\s)?.*?(Intel.*?|AMD.*?|NVIDIA.*?|Qualcomm.*?),\s(?:(.*),\s)?([^!]*?)(?:,\s(.*))?\n?$/
 
@@ -54,12 +54,13 @@
             next_data.title = product.querySelector(title_selector).innerText.trim()
             const title_comps = title_regex.exec(next_data.title)
             if (title_comps !== null) {
-                const [title_match_unused, brand, name1, version, name2, gen, title_ext] = title_comps
+                const [title_match_unused, brand, name1, version, name2, gen, title_ext1, form, title_ext2] = title_comps
                 next_data.brand = brand
                 next_data.name = ((name1 ?? "") + " " + (name2 ?? "")).trim()
                 next_data.version = version
                 next_data.gen = gen
-                next_data.title_ext = title_ext
+                next_data.form = form
+                next_data.title_ext = ((title_ext1 ?? "") + ", " + (title_ext2 ?? "")).replace(/^\||\|$/, "").trim()
             } else {
                 console.log("NO TITLE FOUND", next_data.title)
             }
@@ -71,7 +72,7 @@
             next_data.body = product.querySelector(body_selector).innerText.trim()
             const body_comps = body_regex.exec(next_data.body)
             if (body_comps !== null) {
-                const [body_match_unused, disp_diagonal, disp_type, disp_size, cpu, ssd, ram, lte1, gpu, lte2, os, body_ext1, form, body_ext2] = body_comps
+                const [body_match_unused, disp_diagonal, disp_type, disp_size, cpu, ssd, ram, lte1, gpu, lte2, os, body_ext] = body_comps
                 next_data.disp_diagonal = disp_diagonal
                 next_data.disp_type = disp_type
                 next_data.disp_size = disp_size
@@ -82,7 +83,7 @@
                 next_data.ram = ram
                 next_data.os = os
                 next_data.form = form
-                next_data.body_ext = ((body_ext1 ?? "") + ", " + (body_ext2 ?? "")).replace(/^\||\|$/, "").trim()
+                next_data.body_ext = body_ext
             } else {
                 console.log("NO BODY FOUND", next_data.body)
             }
