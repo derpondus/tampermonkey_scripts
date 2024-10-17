@@ -115,8 +115,7 @@
 
         const toolbar_bottom = document.querySelector(".toolbar-bottom");
         if (toolbar_bottom !== null) {
-            toolbar_bottom.scrollIntoView({behavior: "smooth"})
-            window.scrollBy(0, -500)
+            toolbar_bottom.scrollIntoView({behavior: "smooth", block: "center", inline: "center"})
         }
     }
 
