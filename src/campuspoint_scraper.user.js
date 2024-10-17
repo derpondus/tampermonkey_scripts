@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CampusPoint extractor
 // @namespace    http://tampermonkey.net/
-// @version      1.16.1
+// @version      1.16.2
 // @description  pack listing data from campuspoint.de into a csv in the console
 // @author       PondusDev
 // @match        https://www.campuspoint.de/mobile/notebooks*
@@ -60,7 +60,7 @@
                 next_data.version = version
                 next_data.gen = gen
                 next_data.form = form
-                next_data.title_ext = ((title_ext1 ?? "") + ", " + (title_ext2 ?? "")).replace(/^\||\|$/, "").trim()
+                next_data.title_ext = ((title_ext1 ?? "") + ", " + (title_ext2 ?? "")).replace(/^,|,$/, "").trim()
             } else {
                 console.log("NO TITLE FOUND", next_data.title)
             }
