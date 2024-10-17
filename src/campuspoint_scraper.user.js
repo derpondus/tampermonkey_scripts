@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CampusPoint extractor
 // @namespace    http://tampermonkey.net/
-// @version      1.7
+// @version      1.8
 // @description  pack listing data from campuspoint.de into a csv in the console
 // @author       PondusDev
 // @match        https://www.campuspoint.de/mobile/notebooks*
@@ -54,7 +54,8 @@
             next_data.title = product.querySelector(title_selector).innerText
             const title_comps = title_regex.exec(next_data.title)
             if (title_comps !== null) {
-                const [title_match_unused, brand, name, gen, title_ext] = title_comps
+                const [title_match_unused, maker, brand, name, gen, title_ext] = title_comps
+                next_data.maker = maker
                 next_data.brand = brand
                 next_data.name = name
                 next_data.gen = gen
