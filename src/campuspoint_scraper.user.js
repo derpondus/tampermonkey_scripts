@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CampusPoint extractor
 // @namespace    http://tampermonkey.net/
-// @version      1.10
+// @version      1.11
 // @description  pack listing data from campuspoint.de into a csv in the console
 // @author       PondusDev
 // @match        https://www.campuspoint.de/mobile/notebooks*
@@ -17,7 +17,7 @@
     // Your code here...
     function exec() {
         function convertToCSV(arr) {
-            const columns=["artnr", "maker", "brand", "name", "gen", "oldPrice", "price", "disp_diagonal", "disp_type", "disp_size", "cpu", "gpu", "os", "ram", "ssd", "lte", "title_ext"]
+            const columns=["artnr", "maker", "brand", "name", "gen", "oldPrice", "price", "disp_diagonal", "disp_type", "disp_size", "cpu", "gpu", "os", "ram", "ssd", "lte", "title_ext", "body_ext"]
             const rows = [columns.join("\t")]
             for (const value of arr) {
                 rows.push(columns.map(it => value[it]).join("\t"))
@@ -43,7 +43,7 @@
 
         const title_regex = /.*?(Lenovo|HP)(?: Campus)?\s(?:([^()G]*)\s)?([^G()][^()\s]*)\s(?:(G\S*)\s)?(.*)/
         const artnr_regex = /.*?:\s(.*)/
-        const body_regex = /.*?\s\((\S+")\)\s(.*?)\s\((.+\s?x\s?.+?)(?:,.*)?\).*?,\s.*?((?:Intel[^,]*|AMD[^,]*|Qualcomm[^,]*|Snapdragon[^,]*)(?:\(.*?\))?),\s([^()]*?),\s(.*?),\s(?:(.*?),\s)?.*?(Intel.*?|AMD.*?|NVIDIA.*?|Qualcomm.*?),\s(?:(.*?),\s)?([^!]*?)(?:,\s(.*))?$/
+        const body_regex = /.*?\s\((\S+")\)\s(.*?)\s\((.+\s?x\s?.+?)(?:,.*)?\).*?,\s.*?((?:Intel[^,]*|AMD[^,]*|Qualcomm[^,]*|Snapdragon[^,]*)(?:\(.*?\))?),\s([^()]*?),\s(.*?),\s(?:(.*?),\s)?.*?(Intel.*?|AMD.*?|NVIDIA.*?|Qualcomm.*?),\s(?:(.*?),\s)?([^!]*?)(?:,\s(.*))?\n?$/
 
         const product_holder = document.querySelectorAll(base_selector)
         const data = []
