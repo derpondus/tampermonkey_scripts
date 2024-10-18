@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CampusPoint extractor
 // @namespace    http://tampermonkey.net/
-// @version      1.16.3
+// @version      1.17
 // @description  pack listing data from campuspoint.de into a csv in the console
 // @author       PondusDev
 // @match        https://www.campuspoint.de/mobile/notebooks*
@@ -41,7 +41,7 @@
         const price = ".actions .price--current .price-tag"
         const oldprice = ".actions .price--old .price-tag"
 
-        const title_regex = /.*?(Lenovo|HP)(?: Campus)?\s(?:([^()G\d]*(?:x360)?)\s)?(?:([^G()]*?\d[^()G]*?(?:\sCarbon)?)\s)?(?:([^()G\d]*|2in1)\s)?(?:(G\S*)\s)?([^()]*)(?:\((.*)\)(.*))?/
+        const title_regex = /.*?(Lenovo|HP)(?:\sCampus)?\s(?:([^()G\d]*(?:[xX]360)?)\s)?(?:([^G()]*?\d[^()G]*?(?:\sCarbon)?)\s)?(?:([^()G\d]*|2in1)\s)?(?:(G\S*)\s)?([^()]*)(?:\((.*)\)(.*))?/
         const artnr_regex = /.*?:\s(.*)/
         const body_regex = /.*?\s\((\S+")\)\s(.*?)\s\((.+\s?x\s?.+?)(?:,.*)?\).*?,\s.*?((?:Intel[^,]*|AMD[^,]*|Qualcomm[^,]*|Snapdragon[^,]*)(?:\(.*?\))?),\s([^()]*?),\s(.*?),\s(?:(.*?),\s)?.*?(Intel.*?|AMD.*?|NVIDIA.*?|Qualcomm.*?),\s(?:(.*),\s)?([^!]*?)(?:,\s(.*))?\n?$/
 
