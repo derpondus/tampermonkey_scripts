@@ -1,10 +1,11 @@
 // ==UserScript==
-// @name         CPUBenchmark extractor
+// @name         XXXBenchmark extractor
 // @namespace    http://tampermonkey.net/
-// @version      0.1
-// @description  pack benchmark data from cpubenchmark.net into a csv in the console
+// @version      0.1.1
+// @description  pack benchmark data from ...benchmark.net sites (cpu, videocard) into a csv in the console
 // @author       PondusDev
 // @match        https://www.cpubenchmark.net/CPU_mega_page.html
+// @match        https://www.videocardbenchmark.net/GPU_mega_page.html
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=cpubenchmark.net
 // @grant        none
 // ==/UserScript==
@@ -16,8 +17,7 @@
 
     // Your code here...
     function exec() {
-        function convertToCSV(arr) {
-            const columns=["artnr", "brand", "name", "version", "gen", "oldPrice", "price", "disp_diagonal", "disp_type", "disp_size", "cpu", "gpu", "os", "ram", "ssd", "lte", "form", "title_ext", "body_ext"]
+        function convertToCSV(arr, columns) {
             const rows = [columns.join("\t")]
             for (const value of arr) {
                 rows.push(columns.map(it => value[it]).join("\t"))
@@ -50,15 +50,15 @@
         }
 
         //console.log(data)
-        //console.log(convertToCSV(data))
+        //console.log(convertToCSV(data, columns))
 
         for (const item of data) {
             if (item[columns[0]] in all_data) {
                 console.log("--- Duplicate ---")
                 console.log(item)
-                console.log(item[columns[0]])
+                console.log(all_data[item[columns[0]]])
                 let diff = false
-                for (const key of Object.keys(product)) {
+                for (const key of Object.keys(item)) {
                     if (item[key] !== all_data[item[columns[0]]][key]) {
                         console.log(`${key}: ${item[key]} !== ${all_data[item[columns[0]]][key]}`)
                         diff = true
@@ -71,7 +71,7 @@
         }
 
         console.log(Object.values(all_data))
-        console.log(convertToCSV(Object.values(all_data)))
+        console.log(convertToCSV(Object.values(all_data), columns))
     }
 
     const button = document.createElement('button')
