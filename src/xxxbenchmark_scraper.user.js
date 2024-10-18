@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         XXXBenchmark extractor
 // @namespace    http://tampermonkey.net/
-// @version      0.1.2
+// @version      0.1.3
 // @description  pack benchmark data from ...benchmark.net sites (cpu, videocard) into a csv in the console
 // @author       PondusDev
 // @match        https://www.cpubenchmark.net/CPU_mega_page.html
@@ -28,7 +28,7 @@
 
         const column_selector = "#cputable > thead > tr > th:not(:first-child)"
         const columns = Array.from(document.querySelectorAll(column_selector)).map(it => it.innerText
-            .toLowerCase().replace(/[^a-z_\s]/g, "").trim().replace(/\s+/g, "_"))
+            .toLowerCase().replace(/[^a-z_\s\d]/g, "").trim().replace(/\s+/g, "_"))
 
         const base_selector = "#cputable > tbody > tr"
 
