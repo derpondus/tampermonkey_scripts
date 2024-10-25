@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Crunchyroll Spoiler Bandaid
 // @namespace    http://crunchyroll.com/
-// @version      2.0.1
+// @version      2.0.2
 // @description  I wanted spoiler-support now, so here we go.
 // @author       PondusDev
 // @match        https://www.crunchyroll.com/*
@@ -41,7 +41,7 @@
                 const elem = document.querySelector(selector);
                 if (elem !== null) {
                     observer.disconnect()
-                    info("found comentario")
+                    info("found comentario", elem)
                     resolve(elem)
                 }
             })
@@ -53,7 +53,7 @@
             const elem = document.querySelector(selector);
             if (elem !== null) {
                 observer.disconnect()
-                info("found comentario immediately")
+                info("found comentario immediately", elem)
                 resolve(elem)
             }
         })
@@ -96,7 +96,7 @@
             textArea.value = `${preSelection}||${selection}||${postSelection}`
         }
         const toolbarSection = comentarioEditor.querySelector(".comentario-toolbar-section:first-child")
-        debug("toolbarSection", toolbarSection)
+        debug("buttonInserted", toolbarSection)
         toolbarSection.appendChild(spoilerButton)
     }
 
@@ -117,8 +117,7 @@
             if (editorObserver === observer) {
                 observer.observe(newEditors, {
                     subtree: true,
-                    childList: true,
-                    characterData: true,
+                    childList: true
                 })
             }
         }
@@ -133,6 +132,7 @@
             subtree: true,
             childList: true
         })
+        debug("editorObserver attached")
     }
 
     async function exec() {
