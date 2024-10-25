@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Crunchyroll Spoiler Bandaid
 // @namespace    http://crunchyroll.com/
-// @version      2.0.0
+// @version      2.0.1
 // @description  I wanted spoiler-support now, so here we go.
 // @author       PondusDev
 // @match        https://www.crunchyroll.com/*
@@ -96,6 +96,7 @@
             textArea.value = `${preSelection}||${selection}||${postSelection}`
         }
         const toolbarSection = comentarioEditor.querySelector(".comentario-toolbar-section:first-child")
+        debug("toolbarSection", toolbarSection)
         toolbarSection.appendChild(spoilerButton)
     }
 
@@ -106,7 +107,9 @@
             observer.disconnect()
 
             const addedNodes = mutationsList.flatMap((mutation) => Array.from(mutation.addedNodes))
+            debug("added Nodes", addedNodes)
             const newEditors = addedNodes.filter((node) => node.classList.contains("comentario-comment-editor"))
+            debug("editor added Nodes", newEditors)
             for (const editor of newEditors) {
                 onEditorOpen(editor)
             }
