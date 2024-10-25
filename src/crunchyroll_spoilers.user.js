@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Crunchyroll Spoiler Bandaid
 // @namespace    http://crunchyroll.com/
-// @version      1.2.1
+// @version      2.0.0
 // @description  I wanted spoiler-support now, so here we go.
 // @author       PondusDev
 // @match        https://www.crunchyroll.com/*
@@ -15,62 +15,24 @@
     // Your code here...
     // >>> somehow this got very pythonic
 
+    // insert html
+    const spoilerButtonHTML = `
+    <button class="comentario-btn comentario-btn-tool" type="button" title="Spoiler" tabindex="-1">
+        <svg class="comentario-icon" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-2-6h4v-2h-4v2z"></path>
+        </svg>
+    </button>`
+
     // insert css
     const style = document.createElement('style');
     style.innerHTML = `
-    .crunchy-comments-spoiler-block {
-        color: transparent;
-        background: rgba(127, 127, 127, 0.6);
-        padding: 0 4px;
-        border-radius: 4px;
-        vertical-align: middle;
-        cursor: pointer;
-        font-family: monospace;
-        position: relative;
-        -webkit-user-select: none; /* Safari */
-        -ms-user-select: none; /* IE 10 and IE 11 */
-        user-select: none; /* Standard syntax */
-        transition:
-            background 0.2s,
-            color 0.2s;
-    }
-
-    .crunchy-comments-spoiler-block:hover {
-        background: rgba(127, 127, 127, 0.8);
-    }
-
-    .crunchy-comments-spoiler-block.revealed {
-        background: rgba(127, 127, 127, 0.3);
-        color: revert;
-        -webkit-user-select: auto; /* Safari */
-        -ms-user-select: auto; /* IE 10 and IE 11 */
-        user-select: auto; /* Standard syntax */
-    }
-
-    .crunchy-comments-spoiler-block:hover::after {
-        content: "Spoiler (click to reveal)";
-        position: absolute;
-        color: white;
-        width: max-content;
-        background: gray;
-        padding: 0.1em 0.5em;
-        border-radius: 0.4em;
-        bottom: 100%;
-        transform: translate(-50%, -50%);
-        left: 50%;
-        font-size: x-small;
-    }
-    .crunchy-comments-spoiler-block.revealed:hover::after {
-        content: "Spoiler (click to hide)";
-    }
+    
     `;
     document.head.appendChild(style);
 
     const logPrefix = "[CSB]"
     function info(...args) { console.info(logPrefix, ...args) }
     function debug(...args) { console.debug(logPrefix, ...args) }
-
-    const regex = /\|\|.+?\|\|/gs
 
     /* Waits for the first element that matches the selector to appear in the DOM */
     async function getBodyElementEventually(selector) {
@@ -122,30 +84,57 @@
         });
     }
 
-    /* Takes the `.comentario-comments` element replaces all spoilers with a span element that can be clicked to reveal the spoiler */
-    function replaceSpoilersWithHtml(regex, commentHolder, mutationsList, observer) {
-        observer.disconnect();
+    function onEditorOpen(comentarioEditor) {
+        const spoilerButton = document.createElement("button")
+        spoilerButton.outerHTML = spoilerButtonHTML
+        spoilerButton.onclick = () => {
+            const textArea = comentarioEditor.querySelector("textarea")
+            const preSelection = textArea.value.substring(0, textArea.selectionStart)
+            let selection = textArea.value.substring(textArea.selectionStart, textArea.selectionEnd)
+            if(selection === "") selection = "text"   // default spoiler text in case nothing is selected
+            const postSelection = textArea.value.substring(textArea.selectionEnd)
+            textArea.value = `${preSelection}||${selection}||${postSelection}`
+        }
+        const toolbarSection = comentarioEditor.querySelector(".comentario-toolbar-section:first-child")
+        toolbarSection.appendChild(spoilerButton)
+    }
 
-        for (const comment of commentHolder.querySelectorAll(".comentario-card .comentario-card-body > p:not(:has(span.crunchy-comments-spoiler-block))")) {
-            comment.innerHTML = comment.innerHTML.replaceAll(regex, (match) => `<span class="crunchy-comments-spoiler-block">${match.slice(2,match.length-2).trim()}</span>`)
-            comment.querySelectorAll("span.crunchy-comments-spoiler-block").forEach((spoiler) => {
-                spoiler.addEventListener("click", () => {
-                    spoiler.classList.toggle("revealed")
+    let editorObserver = null
+    // Reattach the MutationObserver to monitor comment editor
+    const reattachAddCommentObserver = async (comentarioComments) => {
+        const onMutation = (mutationsList, observer) => {
+            observer.disconnect()
+
+            const addedNodes = mutationsList.flatMap((mutation) => Array.from(mutation.addedNodes))
+            const newEditors = addedNodes.filter((node) => node.classList.contains("comentario-comment-editor"))
+            for (const editor of newEditors) {
+                onEditorOpen(editor)
+            }
+
+            if (editorObserver === observer) {
+                observer.observe(newEditors, {
+                    subtree: true,
+                    childList: true,
+                    characterData: true,
                 })
-            })
+            }
         }
 
-        observer.observe(commentHolder, {
+        if (editorObserver !== null) editorObserver.disconnect()
+        editorObserver = new MutationObserver(onMutation)
+        const editors = comentarioComments.querySelector(".comentario-comment-editor")
+        for (const editor of editors) {
+            onEditorOpen(editor)
+        }
+        editorObserver.observe(comentarioComments, {
             subtree: true,
-            childList: true,
-            characterData: true
+            childList: true
         })
     }
 
-    let commentObserver = null;
     async function exec() {
         info("(re-)init")
-        if (commentObserver !== null) commentObserver.disconnect()
+        if (editorObserver !== null) editorObserver.disconnect()
         if (removalObserver !== null) removalObserver.disconnect()
 
         /* Reinit on removal of the comentario element */
@@ -153,9 +142,7 @@
         onComentarioRemoval(comentarioComments, exec)
 
         /* Add spoiler blocks to existing comments + react to changes */
-        const commentHolder = await getBodyElementEventually("comentario-comments .comentario-comments")
-        commentObserver = new MutationObserver(replaceSpoilersWithHtml.bind(null, regex, commentHolder))
-        replaceSpoilersWithHtml(regex, commentHolder, null, commentObserver);
+        await reattachAddCommentObserver(comentarioComments)
     }
 
     await exec()
