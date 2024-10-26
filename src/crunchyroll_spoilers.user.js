@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Crunchyroll Spoiler Bandaid
 // @namespace    http://crunchyroll.com/
-// @version      2.0.4
+// @version      2.0.5
 // @description  I wanted spoiler-support now, so here we go.
 // @author       PondusDev
 // @match        https://www.crunchyroll.com/*
@@ -29,6 +29,7 @@
     document.head.appendChild(style);
 
     const logPrefix = "[CSB]"
+    function error(...args) { console.error(logPrefix, ...args) }
     function info(...args) { console.info(logPrefix, ...args) }
     function debug(...args) { console.debug(logPrefix, ...args) }
 
@@ -128,6 +129,9 @@
             debug("added Nodes", addedNodes)
             const newEditors = addedNodes.filter((node) => node.classList && node.classList.contains("comentario-comment-editor"))
             debug("editor added Nodes", newEditors)
+            if (newEditors.length >= 1) {
+                error("Expected only one editor, but got more.")
+            }
             for (const editor of newEditors) {
                 onEditorOpen(editor)
             }
