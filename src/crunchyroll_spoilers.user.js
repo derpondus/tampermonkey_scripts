@@ -17,11 +17,9 @@
 
     // insert html
     const spoilerButtonHTML = `
-    <button class="comentario-btn comentario-btn-tool" type="button" title="Spoiler" tabindex="-1">
-        <svg class="comentario-icon" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-2-6h4v-2h-4v2z"></path>
-        </svg>
-    </button>`
+    <svg class="comentario-icon" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-2-6h4v-2h-4v2z"></path>
+    </svg>`
 
     // insert css
     const style = document.createElement('style');
@@ -86,17 +84,21 @@
 
     function onEditorOpen(comentarioEditor) {
         const spoilerButton = document.createElement("button")
-        spoilerButton.outerHTML = spoilerButtonHTML
+        spoilerButton.classList.add("comentario-btn", "comentario-btn-tool")
+        spoilerButton.type = "button"
+        spoilerButton.title = "Spoiler"
+        spoilerButton.tabIndex = -1
+        spoilerButton.innerHTML = spoilerButtonHTML
         spoilerButton.onclick = () => {
             const textArea = comentarioEditor.querySelector("textarea")
             const preSelection = textArea.value.substring(0, textArea.selectionStart)
             let selection = textArea.value.substring(textArea.selectionStart, textArea.selectionEnd)
-            if(selection === "") selection = "text"   // default spoiler text in case nothing is selected
+            if (selection === "") selection = "text"   // default spoiler text in case nothing is selected
             const postSelection = textArea.value.substring(textArea.selectionEnd)
             textArea.value = `${preSelection}||${selection}||${postSelection}`
         }
         const toolbarSection = comentarioEditor.querySelector(".comentario-toolbar-section:first-child")
-        debug("buttonInserted", toolbarSection)
+        debug("buttonInserted", spoilerButton, toolbarSection)
         toolbarSection.appendChild(spoilerButton)
     }
 
@@ -108,14 +110,14 @@
 
             const addedNodes = mutationsList.flatMap((mutation) => Array.from(mutation.addedNodes))
             debug("added Nodes", addedNodes)
-            const newEditors = addedNodes.filter((node) => node.classList.contains("comentario-comment-editor"))
+            const newEditors = addedNodes.filter((node) => node.classList && node.classList.contains("comentario-comment-editor"))
             debug("editor added Nodes", newEditors)
             for (const editor of newEditors) {
                 onEditorOpen(editor)
             }
 
             if (editorObserver === observer) {
-                observer.observe(newEditors, {
+                observer.observe(comentarioComments, {
                     subtree: true,
                     childList: true
                 })
@@ -124,7 +126,7 @@
 
         if (editorObserver !== null) editorObserver.disconnect()
         editorObserver = new MutationObserver(onMutation)
-        const editors = comentarioComments.querySelector(".comentario-comment-editor")
+        const editors = comentarioComments.querySelectorAll(".comentario-comment-editor")
         for (const editor of editors) {
             onEditorOpen(editor)
         }
