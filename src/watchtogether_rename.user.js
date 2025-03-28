@@ -4,7 +4,7 @@
 // @version      2.0.5
 // @description  Automatically renames you to a hardcoded name (so you dont need to rename yourself everytime you enter a w2g group).
 // @author       PondusDev
-// @match        https://www.w2g.tv/*/room*
+// @match        https://www.w2g.tv/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=w2g.tv
 // @grant        none
 // ==/UserScript==
