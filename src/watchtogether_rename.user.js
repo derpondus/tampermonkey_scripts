@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         WatchTogether Rename
 // @namespace    http://w2g.tv/
-// @version      0.0.1
+// @version      0.0.2
 // @description  Automatically renames you to a hardcoded name (so you dont need to rename yourself everytime you enter a w2g group).
 // @author       PondusDev
-// @match        https://www.w2g.tv/*
+// @match        https://w2g.tv/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=w2g.tv
 // @grant        none
 // ==/UserScript==
