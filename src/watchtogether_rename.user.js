@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         WatchTogether Rename
 // @namespace    http://w2g.tv/
-// @version      2.0.5
-// @description  I wanted spoiler-support now, so here we go.
+// @version      0.0.2
+// @description  Automatically renames you to a hardcoded name (so you dont need to rename yourself everytime you enter a w2g group).
 // @author       PondusDev
-// @match        https://www.w2g.tv/*/room*
+// @match        https://w2g.tv/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=w2g.tv
 // @grant        none
 // ==/UserScript==
