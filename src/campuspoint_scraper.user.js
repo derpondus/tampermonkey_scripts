@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CampusPoint extractor
 // @namespace    http://tampermonkey.net/
-// @version      1.17
+// @version      1.18
 // @description  pack listing data from campuspoint.de into a csv in the console
 // @author       PondusDev
 // @match        https://www.campuspoint.de/mobile/notebooks*
@@ -44,7 +44,7 @@
         // title_regexr: regexr.com/87atu
         // artnr_regexr: regexr.com/87au1
         // body_regexr: regexr.com/87atr
-        const title_regex = /.*?(Lenovo|HP)(?:\sCampus)?\s(?:([^()G\d]*(?:[xX]360)?)\s)?(?:([^G()]*?\d[^()G]*?(?:\sCarbon)?)\s)?(?:([^()G\d]*|2in1)\s)?(?:(G\S*)\s)?([^()]*)(?:\((.*)\)(.*))?/
+        const title_regex = /.*?(Lenovo|HP|Acer)(?:\sCampus)?\s(?:([^()G\d]*(?:[xX]360)?)\s)?(?:([^G()]*?\d[^()G]*?(?:\sCarbon)?)\s)?(?:([^()G\d]*|2in1)\s)?(?:(G\S*)\s)?([^()]*)(?:\((.*)\)(.*))?/
         const artnr_regex = /.*?:\s(.*)/
         const body_regex = /.*?\s\((\S+")\)\s(.*?)\s\((.+\s?x\s?.+?)(?:,.*)?\).*?,\s.*?((?:Intel[^,]*|AMD[^,]*|Qualcomm[^,]*|Snapdragon[^,]*)(?:\(.*?\))?),\s([^()]*?),\s(.*?),\s(?:(.*?),\s)?.*?(Intel.*?|AMD.*?|NVIDIA.*?|Qualcomm.*?),\s(?:(.*),\s)?([^!]*?)(?:,\s(.*))?\n?$/
 
@@ -66,6 +66,7 @@
                 next_data.title_ext = ((title_ext1 ?? "") + ", " + (title_ext2 ?? "")).replace(/^[,\s]+|[,\s]+$/, "").trim()
             } else {
                 console.log("NO TITLE FOUND", next_data.title)
+                next_data.title_ext = next_data.title
             }
 
             next_data.artnr = product.querySelector(artnr_selector).innerText.trim()
@@ -88,6 +89,7 @@
                 next_data.body_ext = body_ext
             } else {
                 console.log("NO BODY FOUND", next_data.body)
+                next_data.body_ext = next_data.body
             }
 
             next_data.price = getPrice(product.querySelector(price)).replace(",", ".")
