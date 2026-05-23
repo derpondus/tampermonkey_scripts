@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CrunchyComments Injector
 // @namespace    http://crunchyroll.com/
-// @version      1.0.0
+// @version      1.0.1
 // @description  I needed to unilaterally edit the plugin code, so here we go.
 // @author       PondusDev
 // @match        https://www.crunchyroll.com/*
@@ -38,6 +38,7 @@
             function resolveIfPresent() {
                 const elem = document.querySelector(selector)
                 if (elem !== null) {
+                    info("found comentario", elem)
                     resolve(elem)
                 } else {
                     requestAnimationFrame(resolveIfPresent)
@@ -77,6 +78,7 @@
                 error("Expected only one editor, but got more.")
             }
             for (const editor of newEditors) {
+                info("editor found:", editor)
                 onEditorOpen(editor)
             }
 
@@ -92,6 +94,7 @@
         editorObserver = new MutationObserver(onMutation)
         const editors = comentarioComments.querySelectorAll(".comentario-comment-editor")
         for (const editor of editors) {
+            info("editor found immediately:", editor)
             onEditorOpen(editor)
         }
         editorObserver.observe(comentarioComments, {
