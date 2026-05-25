@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CrunchyComments Injector
 // @namespace    http://crunchyroll.com/
-// @version      1.0.1
+// @version      1.1.0
 // @description  I needed to unilaterally edit the plugin code, so here we go.
 // @author       PondusDev
 // @match        https://www.crunchyroll.com/*
@@ -21,13 +21,13 @@
     // insert css
     const style = document.createElement('style');
     style.innerHTML = `    
-    `; // nothing right now
+    `;  // nothing right now
     document.head.appendChild(style);
 
 
     /* ----- Helpers ----- */
 
-    const logPrefix = "[CSB]"
+    const logPrefix = "[CCI]"
     function error(...args) { console.error(logPrefix, ...args) }
     function info(...args) { console.info(logPrefix, ...args) }
     function debug(...args) { console.debug(logPrefix, ...args) }
@@ -114,9 +114,10 @@
             return;
         }
         removalObserver = new MutationObserver(function (mutations) {
-            const removedNodes = mutations.flatMap((mutation) => Array.from(mutation.removedNodes))
-            debug("removed nodes", removedNodes)
-            if (removedNodes.some((node) => node === comentarioComments)) {
+            //const removedNodes = mutations.flatMap((mutation) => Array.from(mutation.removedNodes))
+            //debug("removed nodes", removedNodes)
+            //if (removedNodes.some((node) => node === comentarioComments)) {
+            if (comentarioComments.isConnected) {
                 removalObserver.disconnect();
                 info("comentario was removed")
                 callback();
