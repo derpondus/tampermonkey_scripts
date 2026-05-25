@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CrunchyComments Injector
 // @namespace    http://crunchyroll.com/
-// @version      1.1.0
+// @version      1.1.1
 // @description  I needed to unilaterally edit the plugin code, so here we go.
 // @author       PondusDev
 // @match        https://www.crunchyroll.com/*
@@ -117,7 +117,7 @@
             //const removedNodes = mutations.flatMap((mutation) => Array.from(mutation.removedNodes))
             //debug("removed nodes", removedNodes)
             //if (removedNodes.some((node) => node === comentarioComments)) {
-            if (comentarioComments.isConnected) {
+            if (!comentarioComments.isConnected) {
                 removalObserver.disconnect();
                 info("comentario was removed")
                 callback();
