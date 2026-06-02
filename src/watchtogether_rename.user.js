@@ -28,7 +28,7 @@ function theElement(selector) {
 
     // Your code here...
 
-    const user = await theElement('.w2g-users .self .bg-green-600');
+    const user = await theElement('.w2g-users .self .bg-green-700');
     user.click();
     const el = await theElement('#nickname-form-nickname');
     el.value = 'Pondus';
